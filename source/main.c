@@ -25,9 +25,6 @@
 #include "dbg.h"
 #include "linearsystem.h"
 
-#define NT __NCORES__   //Number of architecture supported threads.
-
-
 // These two function are not ansi C so they do not appear from the
 // libstd.h  header if the gcc option -std=c99 option is used.
 // I should see if there is a safe way to include them from stdlib.h
@@ -40,14 +37,9 @@ main(int argc, char *argv[]){
   int   n=4;    // problenm size
   int   seed=10;// seed for srand48() / drand48()
   int i,j;      // iterators
-  double *a;    // A diagonally dominant matrix A. Space to be allocated.
-  double *b;    // A translation vector B.  Space to be allocated.
-  double itt_err = 0;  //Error of each iteration.
+  
   int   itt_max=5;// number of itterations to preform
-  int   itt;    // current itteration
   char  ch;     // for error checking on command line args.
-  pthread_t threads[NT];
-  linearSystem_t local_system;
 
   if( argc == 4 ) {
     if( (sscanf(argv[1],"%d %[^ /t]", &n, &ch) != 1) ||
@@ -72,47 +64,37 @@ main(int argc, char *argv[]){
     fprintf(stderr," ERROR : malloc for b failed\n");
     return(1);
   }
-  if( (local_system.t_p=(double *)malloc(sizeof(double)*n)) == NULL) {
+  if( (t=(double *)malloc(sizeof(double)*n)) == NULL) {
     fprintf(stderr," ERROR : malloc for t failed\n");
     return(1);
   }
-  if( (local_system.t1_p=(double *)malloc(sizeof(double)*n)) == NULL) {
+  if( (t1=(double *)malloc(sizeof(double)*n)) == NULL) {
     fprintf(stderr," ERROR : malloc for t1 failed\n");
     return(1);
   }
-  //t = Ax + b;
-  local_system.a_p = a;         //transformation matrix A
-  local_system.b_p = b;         //translation vextor b
-  local_system.dimension = n; //dimension of linear space.
+  
+  dimension = n; //dimension of linear space.
 
   // Generate matrix a with | eigenvalues | < 1
   srand48((long int)seed);
-  printf ("\n  a=\n");
   for(i=0; i< n; i++) {
     for(j=0; j< n; j++) {
       *(a+n*i+j) = 1.999 * (drand48() - 0.5) / n;
-      printf("%10.6f ", *(a+n*i+j) );
     }
-    printf("\n");
   }
-  printf("\n  b=\n");
   // Generate vector b
   for(i=0; i< n; i++) {
     b[i] = 10.0 * drand48();
-    printf("%10.6f ", b[i]);
   }
-  printf("\n");
+  
   // Initialize t
   for(i=0; i< n; i++) {
-    local_system.t_p[i] = b[i];
+    t[i] = b[i];
   }
 
-  //main loop
   printf("\n  itt  error\n");
-  for(itt=0; itt<=itt_max; itt++) {
-    itt_err = step_linear_system((pthread_t *)&threads, &local_system);
-    printf("%5d %14.6e\n", itt, itt_err); 
-  }
-  return(0);
+  //main work
+  step_linear_system(itt_max);
+ 
+  return 0;
 }
-

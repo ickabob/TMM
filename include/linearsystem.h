@@ -6,27 +6,24 @@
 #ifndef __NCORES__
 #define __NCORES__ 1
 #endif
+
+#define NTHREADS __NCORES__
+
 /* linear system:
  * t = Ax + b
  */
-typedef struct{
-  double *a_p;   //A
-  double *b_p;   //B 
-  double *t_p;   //t
-  double *t1_p;  //x
-  int dimension; //dimension of the rowspace of t.
-}linearSystem_t;
 
-/*Structured meta information.
- *  A packaged reference to a linear system,
- *  and some reflective information for dispatched threads.
- */
-typedef struct {
-  linearSystem_t *system_p;
-  int thread_max;
-  int thread_number;
-  double *return_storage_p;
-}threadLocalState_t;
+double *a;   //A
+double *b;   //B 
+double *t;   //t
+double *t1;  //x
+int dimension; //dimension of the rowspace of t.
 
-double step_linear_system(pthread_t *threads, linearSystem_t *system );
+
+//step the linear system count times.
+void step_linear_system(int count);
+
+//iteration errors.
+double *errors;
+
 #endif
