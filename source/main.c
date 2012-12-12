@@ -25,7 +25,8 @@
 #include "dbg.h"
 #include "linearsystem.h"
 
-#define NT 2   //Number of architecture supported threads.
+#define NT __NCORES__   //Number of architecture supported threads.
+
 
 // These two function are not ansi C so they do not appear from the
 // libstd.h  header if the gcc option -std=c99 option is used.
@@ -41,6 +42,7 @@ main(int argc, char *argv[]){
   int i,j;      // iterators
   double *a;    // A diagonally dominant matrix A. Space to be allocated.
   double *b;    // A translation vector B.  Space to be allocated.
+  double itt_err = 0;  //Error of each iteration.
   int   itt_max=5;// number of itterations to preform
   int   itt;    // current itteration
   char  ch;     // for error checking on command line args.
@@ -70,17 +72,17 @@ main(int argc, char *argv[]){
     fprintf(stderr," ERROR : malloc for b failed\n");
     return(1);
   }
-  if( (local_system.t=(double *)malloc(sizeof(double)*n)) == NULL) {
+  if( (local_system.t_p=(double *)malloc(sizeof(double)*n)) == NULL) {
     fprintf(stderr," ERROR : malloc for t failed\n");
     return(1);
   }
-  if( (local_system.t1=(double *)malloc(sizeof(double)*n)) == NULL) {
+  if( (local_system.t1_p=(double *)malloc(sizeof(double)*n)) == NULL) {
     fprintf(stderr," ERROR : malloc for t1 failed\n");
     return(1);
   }
   //t = Ax + b;
-  local_system.a = a;         //transformation matrix A
-  local_system.b = b;         //translation vextor b
+  local_system.a_p = a;         //transformation matrix A
+  local_system.b_p = b;         //translation vextor b
   local_system.dimension = n; //dimension of linear space.
 
   // Generate matrix a with | eigenvalues | < 1
@@ -102,14 +104,14 @@ main(int argc, char *argv[]){
   printf("\n");
   // Initialize t
   for(i=0; i< n; i++) {
-    local_system.t[i] = b[i];
+    local_system.t_p[i] = b[i];
   }
 
-  
   //main loop
-  // printf("\n  itt  error\n");
+  printf("\n  itt  error\n");
   for(itt=0; itt<=itt_max; itt++) {
-    step_linear_system((pthread_t *)&threads, NT, &local_system);
+    itt_err = step_linear_system((pthread_t *)&threads, &local_system);
+    printf("%5d %14.6e\n", itt, itt_err); 
   }
   return(0);
 }

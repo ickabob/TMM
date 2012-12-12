@@ -3,15 +3,17 @@
 
 #include <pthread.h>
 
-
+#ifndef __NCORES__
+#define __NCORES__ 1
+#endif
 /* linear system:
  * t = Ax + b
  */
 typedef struct{
-  double *a;   //A
-  double *b;   //B 
-  double *t;   //t
-  double *t1;  //x
+  double *a_p;   //A
+  double *b_p;   //B 
+  double *t_p;   //t
+  double *t1_p;  //x
   int dimension; //dimension of the rowspace of t.
 }linearSystem_t;
 
@@ -20,13 +22,11 @@ typedef struct{
  *  and some reflective information for dispatched threads.
  */
 typedef struct {
-  linearSystem_t *system;
+  linearSystem_t *system_p;
   int thread_max;
   int thread_number;
+  double *return_storage_p;
 }threadLocalState_t;
 
-
-int step_linear_system(pthread_t *threads, int threadcount, linearSystem_t *system );
-void *thread_transformation(void * threadstate);
-
+double step_linear_system(pthread_t *threads, linearSystem_t *system );
 #endif
