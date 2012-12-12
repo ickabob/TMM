@@ -1,0 +1,26 @@
+System:
+	1: L1 cache size = 256kb
+	   L2 cache size = 1024kb
+	2: Clockspeek 	 = (MAX)2300MHz
+	   MIPS		 = ?
+	   MFLOPS	 = ?
+	3: Disk speed	 =
+	   latency	 = 
+	   transfer time = 
+	4: core #   	 = 2
+	   hyperthreading= ?
+	5: OS Version	 = GNU/Linux Ubunut 12.10 64bit
+	6: Virtual Memory= unlimited
+	7: Limits on -
+	   Stack space	 = 8192Kbs
+	   Heap space	 = unlimited
+	   Static area	 = unlimited
+	   Modifiable?	 = Yes, ulimit.
+	8: What is a memory leak?  
+	   How to cause one?
+	9: How to cause signal on stack overflow?
+	10:How to determine pagefaults for given process?
+	11:How can you tell how much user, system and elapsed time a process used.
+	12:How can you time a precedure in a program? How accurate is this?
+	13:What are the largest size (n using matmul) programs that can be run? How much do they page fault?
+	14:What are the largest size (n using matmul) programs that can be run with limited pagefaults?

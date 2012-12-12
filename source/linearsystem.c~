@@ -1,0 +1,66 @@
+#include "dbg.h"
+#include "linearsystem.h"
+
+int 
+step_linear_system(pthread_t *threads, const int NThreads, linearSystem_t *system){
+  int i;   //iterator
+  int rv;  //return check for thread creation.
+  if ((!threads) || (system == NULL)){
+    return -1;
+  }
+  else{
+#ifdef DEBUG
+    debug("Entering step_linear_system\n");
+    debug("Parameters:\n\t%h\n\t%d\n\t%h\n",threads, NThreads, system);
+#endif
+  }
+  for (i=0; i < NThreads; i++)
+    {
+      threadLocalState_t ts = { .system = system, .thread_number = i};
+      //dispatch thread to do its work.
+      rv = pthread_create( (pthread_t *)(&threads + i), NULL, m_multiply, (void *)&ts);
+      if (rv < 0){
+	perror("error on thread creation.\n");
+	return -1;
+      }	
+    }
+  //nonzero return for successfull thread dispatch.
+  return 0;
+}
+
+void *
+m_multiply(void * threadstate){
+  int i,j;
+  double sum;  //Inner product of A * t;
+  double error;//max | t1[i] - t[i] |
+  double errori;// | t1[i] - t[i] |
+  threadLocalState_t *state = (threadLocalState_t *) threadstate;
+
+  log_info("Entering m_multiply\n", );
+#ifdef DEBUG
+  debug("Parameters:\n\t%h\n",threadstate);
+#endif
+  if (threadstate == NULL){
+  log_err("Invalid arguments: %h\n",threadstate);
+  return NULL;
+}
+  log_info("Thread %d starting innerproduct.\n", threadstate->thread_number);
+  
+  return (void *)NULL;
+}
+//
+//  for(i=0; i< n; i++) {
+//    sum = 0.0;
+//    for(j=0; j< n; j++) {
+//      sum += *(a+n*i+j) * t[j];
+//    }
+//    t1[i] = sum + b[i];
+//    errori = fabs(t1[i]-t[i]);
+//    if(errori > error) {
+//      error=errori;
+//    }
+//  }
+//  ttemp = t1;
+//  t1 = t;
+//  t = ttemp;
+//  printf("%5d %14.6e\n", itt, error);
