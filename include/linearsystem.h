@@ -2,6 +2,7 @@
 #define __lnrsys_h__
 
 #include <pthread.h>
+#include <math.h>
 
 #ifndef __NCORES__
 #define __NCORES__ 1

@@ -95,6 +95,7 @@ main(int argc, char *argv[]){
   printf("\n  itt  error\n");
   //main work
   step_linear_system(itt_max);
- 
+  for (i = 0; i < itt_max; i++)
+    printf("%d\t%14.6e\n",i,errors[i]);
   return 0;
 }

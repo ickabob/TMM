@@ -1,4 +1,4 @@
-Cc	 	:=	gcc
+CC	 	:=	gcc
 
 TARGET		:=	matmul
 MAIN		:=	main.c
